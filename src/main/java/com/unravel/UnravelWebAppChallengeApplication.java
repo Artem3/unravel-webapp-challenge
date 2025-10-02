@@ -1,4 +1,4 @@
-package com.unravel.unravel;
+package com.unravel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
