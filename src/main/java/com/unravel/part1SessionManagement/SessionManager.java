@@ -1,31 +1,32 @@
 package com.unravel.part1SessionManagement;
 
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Service;
+
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class SessionManager {
-    private Map<String, String> sessions = new ConcurrentHashMap<>();
 
-    public String login(String userId) {
-        if (sessions.containsKey(userId)) {
+    public String login(String userId, HttpSession session) {
+        if (session.getAttribute("userId") != null) {
             return "User already logged in.";
         }
-        sessions.put(userId, "SESSION_" + UUID.randomUUID().toString());
-        return "Login successful. Session ID: " + sessions.get(userId);
+        String sessionId = session.getId();
+        session.setAttribute("userId", userId);
+        return "Login successful. Session ID: " + sessionId;
     }
 
-    public String logout(String userId) {
-        if (!sessions.containsKey(userId)) {
-            return "User not logged in.";
-        }
-        sessions.remove(userId);
+    public String logout(HttpSession session) {
+        session.invalidate();
         return "Logout successful.";
     }
 
-    public String getSessionDetails(String userId) {
-        if (!sessions.containsKey(userId)) {
-            throw new RuntimeException("Session not found for user " + userId);
+    public String getSessionDetails(HttpSession session) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null) {
+            throw new RuntimeException("Session not found");
         }
-        return "Session ID for user " + userId + ": " + sessions.get(userId);
+        return "Session ID for user " + userId + ": " + session.getId();
     }
 }
