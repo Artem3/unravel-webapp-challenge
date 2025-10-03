@@ -1,16 +1,37 @@
-# Getting Started
-
-### Reference Documentation
-
-TBD
-
-### Maven overrides
-
-TBD
-
 # Backend Challenge Solutions
 
 This project contains solutions for the Unravel Backend Developer Challenge.
-Each package has its own implementation and documentation:
+The implementation is organized into dedicated packages within the source code.  
+The justification and detailed technical solutions for each task are described in the **Project Documentation** sections
+below.
 
-- [Session Management](SOLUTION.md)
+## Getting Started
+
+### Prerequisites
+
+To build and run the project, you need the following:
+
+* **Java Development Kit** (JDK): Version 17 or higher.
+* **Apache Maven**: The latest version is recommended.
+
+### Building and Running
+
+The project uses the Maven Wrapper (mvnw or mvnw.cmd), so a global Maven installation is optional.
+
+Use the following commands from the project root:
+
+```bash
+ mvnw clean install
+```
+
+```bash
+ mvnw spring-boot:run
+```
+
+```bash
+mvnw test
+```
+
+## Project Documentation
+
+* [Session Management problem](SOLUTION.md#1-session-manager)
