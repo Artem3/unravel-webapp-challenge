@@ -1,20 +1,15 @@
 package com.unravel.part3ConcurrencyProblem;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public class LogProcessor {
-    private Queue<String> logQueue = new LinkedList<>();
+    private final PriorityBlockingQueue<LogTask> queue = new PriorityBlockingQueue<>();
 
-    public synchronized void produceLog(String log) {
-        logQueue.add(log);
-        notify();
+    public void produceLog(LogTask task) {
+        queue.put(task);
     }
 
-    public synchronized String consumeLog() throws InterruptedException {
-        while (logQueue.isEmpty()) {
-            wait();
-        }
-        return logQueue.poll();
+    public LogTask consumeLog() throws InterruptedException {
+        return queue.take();
     }
 }

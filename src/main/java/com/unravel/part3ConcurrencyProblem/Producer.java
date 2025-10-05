@@ -1,15 +1,24 @@
 package com.unravel.part3ConcurrencyProblem;
 
-class Producer extends Thread {
-    private LogProcessor processor;
+import lombok.AllArgsConstructor;
 
-    public Producer(LogProcessor processor) {
-        this.processor = processor;
+import java.util.Random;
+
+@AllArgsConstructor
+class Producer implements Runnable {
+    private LogProcessor processor;
+    private final Random random = new Random();
+
+    @Override
+    public void run() {
+        for (int i = 0; i < Constants.TOTAL_TASKS; i++) {
+            TaskPriority priority = getRandomPriority();
+            LogTask task = new LogTask(priority, priority + " log " + i, System.nanoTime());
+            processor.produceLog(task);
+        }
     }
 
-    public void run() {
-        for (int i = 0; i < 100; i++) {
-            processor.produceLog("Log " + i);
-        }
+    private TaskPriority getRandomPriority() {
+        return TaskPriority.values()[random.nextInt(TaskPriority.values().length)];
     }
 }
