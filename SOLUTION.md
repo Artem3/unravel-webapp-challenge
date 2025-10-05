@@ -94,3 +94,45 @@ as hashes with TTL expiration and invalidation.
 * Add comprehensive integration tests with Testcontainers simulating multi-instance deployments
 
 ---
+
+## 3. Producer-Consumer Problem
+
+### Problem
+
+Implement the Producer-Consumer pattern using threads to manage concurrent, multi-priority tasks. The solution must
+feature a dynamic priority mechanism to ensure critical tasks are processed promptly while preventing starvation of
+low-priority tasks.
+
+### Solution
+
+I implemented a prioritized producer-consumer system using a PriorityBlockingQueue with a time-dependent aging
+mechanism to prevent starvation of low-priority tasks, managed by thread pools for scalability.
+
+* Create the `LogTask` class implementing `Comparable<LogTask>` to handle priority comparison with aging adjustment
+  based on creation time.
+* Modify the `LogProcessor` class using `PriorityBlockingQueue` for thread-safe task storage and retrieval.
+* Modify the `Producer` as a `Runnable` that generates tasks with random priorities and adds them to the queue.
+* Modify the `Consumer` as a `Runnable` that consumes tasks, logs processing details including age, simulates work with
+  a short sleep, and counts down a latch.
+* In `LogProcessingApp`, set up `ExecutorService` for a single producer and multiple consumers, use `CountDownLatch` to
+  wait for all tasks, and shut down executors properly.
+
+### Why This Approach
+
+This approach was selected because PriorityBlockingQueue provides built-in thread-safety and efficient priority-based
+retrieval, eliminating the need for manual synchronization while handling concurrency effectively. The time-dependent
+aging mechanism in the comparator dynamically promotes lower-priority tasks after a threshold, balancing critical task
+prioritization with starvation prevention in a simple, low-overhead way. Using thread pools via ExecutorService enhances
+scalability for high loads by managing resource allocation better than direct thread creation, and CountDownLatch
+ensures reliable coordination of task completion without busy-waiting, aligning with Java's concurrent utilities for
+robustness and performance.
+
+### Further Improvements
+
+* Switch to fixed priorities with creation timestamp as a stable tie-breaker in compareTo to avoid inconsistent ordering
+  from time-dependent comparisons.
+* Implement a custom scheduler thread that periodically scans and re-prioritizes aged tasks by removing and re-inserting
+  them into the queue.
+* Use multiple queues per priority level with weighted round-robin selection for more predictable anti-starvation.
+
+---

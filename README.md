@@ -34,4 +34,6 @@ mvnw test
 
 ## Project Documentation
 
-* [Session Management problem](SOLUTION.md#1-session-manager)
+* [Session Management problem](SOLUTION.md#1-session-management)
+* [Memory Management Issue](SOLUTION.md#2-memory-management)
+* [Producer-Consumer Problem](SOLUTION.md#3-producer-consumer-problem)
