@@ -37,3 +37,4 @@ mvnw test
 * [Session Management problem](SOLUTION.md#1-session-management)
 * [Memory Management Issue](SOLUTION.md#2-memory-management)
 * [Producer-Consumer Problem](SOLUTION.md#3-producer-consumer-problem)
+* [Deadlock](SOLUTION.md#4-Deadlock)

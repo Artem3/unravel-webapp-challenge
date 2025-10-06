@@ -136,3 +136,43 @@ robustness and performance.
 * Use multiple queues per priority level with weighted round-robin selection for more predictable anti-starvation.
 
 ---
+
+## 4. Deadlock
+
+### Problem
+
+The system suffers from a hard-to-reproduce, concurrency-dependent deadlock that manifests only after a specific
+threshold of user interaction. It needs to analyze and refactor shared resource locking to eliminate this issue,
+ensuring thread-safe operation and maintaining compatibility with external library locking schemes.
+
+### Solution
+
+The chosen solution replaces synchronized blocks with ReentrantLocks using a consistent acquisition order (lock1 before
+lock2) and tryLock with timeouts to prevent deadlocks.
+
+* Declare `lock1` and `lock2` as `ReentrantLock` instances;
+* Create a `tryAcquireLocks` method to attempt locking with 100 ms timeout, handling partial acquisitions in finally;
+* Update `method1` and `method2` to call `tryAcquireLocks`, execute code if successful, and unlock in reverse order;
+
+### Why This Approach
+
+Alternative solutions considered for resolving the deadlock include:
+
+* Enforcing consistent lock ordering solely with synchronized blocks, which is a simple but lacks flexibility.
+* Implementing lock hierarchies or sorting locks by identity hash codes to dynamically ensure order.
+* Avoiding locks altogether by refactoring to use atomic variables or `ConcurrentHashMap`.
+* Using `Semaphores` for resource control instead of direct locks.
+
+I selected `ReentrantLock` with `tryLock()` and timeout because it prevents indefinite blocking by allowing threads to
+back
+off if locks aren't acquired within 100ms, enhancing resilience under high concurrency. This approach offers greater
+flexibility than synchronized, such as interruptible acquisition and fairness control, while maintaining compatibility
+with third-party libraries.
+
+### Further Improvements
+
+* Make the timeout configurable (via properties or parameters) to adapt to different workloads instead of a fixed 100
+  ms.
+* Add a retry mechanism with exponential backoff in case of unsuccessful capture to improve success without livelock.
+
+---
