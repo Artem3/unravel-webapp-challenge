@@ -176,3 +176,37 @@ with third-party libraries.
 * Add a retry mechanism with exponential backoff in case of unsuccessful capture to improve success without livelock.
 
 ---
+
+## 5. Database Connection Pooling
+
+### Problem
+
+The system faces critical performance issues and database connection bottlenecks during peak load due to poor pool
+management. The core challenge is to use this data to strategically optimize the pool size, rather than merely
+increasing the connection limit.
+
+### Solution
+
+I implemented HikariCP for connection pooling, added custom monitoring to log long waits/underutilization, and dynamic
+pool size adjustment based on metrics.
+
+* Refactor `DatabaseManager`: `@Component` with HikariDataSource injection. Add `@PostConstruct` for pool init,
+  getConnection/closeConnection with long-wait, `@Scheduled` for `monitorPool()` with metrics, waiting/underuse logs,
+  and
+  dynamic adjust.
+* Add `ConnectionSimulator`: `@Component` implements `CommandLineRunner`. Sequential low, medium, and high load. Use
+  ExecutorService, sleep for pressure, logs with separators.
+
+### Why This Approach
+
+HikariCP provides efficient pooling for high concurrency. Custom monitoring logs waits and underutilization, with
+dynamic sizing (increase max on waits, decrease min on idle) based on patterns, avoiding wasteful scaling. Load
+simulator validates behavior, Docker Compose ensures MySQL auto-start in dev, and tests confirm reliability—all meeting
+task goals for scalable solutions.
+
+### Further Improvements
+
+* Add Actuator for metrics exposure.
+* Enable leak detection.
+* Use a fixed-size pool for performance.
+* Integrate advanced monitoring (Prometheus).
