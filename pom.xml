@@ -61,7 +61,15 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
+        </dependency>
+
+        <!--  Automatically starts and stops Docker Compose services
+        when the Spring Boot application starts.
+        Can be disabled by spring.docker.compose.enabled=false -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!--Test dependencies-->
